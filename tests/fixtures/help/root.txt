@@ -1,0 +1,59 @@
+                                                                                
+ Usage: wmx [OPTIONS] COMMAND [ARGS]...                                         
+                                                                                
+ Agent-native Windmill CLI.                                                     
+                                                                                
+ Use the Windmill HTTP API directly, keep output stable for automation, and     
+ spill large payloads to the filesystem when needed.                            
+ Examples:   wmx --help   wmx whoami   wmx scripts list --json   wmx scripts    
+ preview ./scratch.py --data @args.json --wait   wmx resources get u/me/db      
+ --reveal --value-only --output-mode file --output-file ./db.json               
+                                                                                
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --base-url                     TEXT     Windmill base URL, for example       │
+│                                         https://app.windmill.dev             │
+│                                         [default: None]                      │
+│ --workspace                    TEXT     Windmill workspace id.               │
+│                                         [default: None]                      │
+│ --token                        TEXT     Windmill user token. [default: None] │
+│ --json                                  Emit machine-friendly JSON to        │
+│                                         stdout.                              │
+│ --quiet                                 Reduce stderr diagnostics.           │
+│ --verbose                               Emit extra stderr diagnostics.       │
+│ --yes                                   Skip confirmations for destructive   │
+│                                         operations.                          │
+│ --output-mode                  TEXT     Output policy: inline, auto, or      │
+│                                         file.                                │
+│                                         [default: auto]                      │
+│ --output-file                  PATH     Write the primary payload to this    │
+│                                         file.                                │
+│                                         [default: None]                      │
+│ --spill-dir                    PATH     Directory for automatically spilled  │
+│                                         payloads.                            │
+│                                         [default: .wmx-output]               │
+│ --spill-threshold-bytes        INTEGER  Auto-spill payloads larger than this │
+│                                         many bytes.                          │
+│                                         [default: 131072]                    │
+│ --install-completion                    Install completion for the current   │
+│                                         shell.                               │
+│ --show-completion                       Show completion for the current      │
+│                                         shell, to copy it or customize the   │
+│                                         installation.                        │
+│ --help                                  Show this message and exit.          │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────╮
+│ whoami                                                                       │
+│ doctor                                                                       │
+│ scripts     Manage deployed scripts and remote preview runs.                 │
+│ flows       Manage Windmill flows and flow previews.                         │
+│ resources   Manage Windmill resources.                                       │
+│ variables   Manage Windmill variables.                                       │
+│ jobs        Inspect and wait on Windmill jobs.                               │
+│ queue       Inspect queued and running jobs.                                 │
+│ schedules   Manage schedules.                                                │
+│ apps        Manage Windmill apps.                                            │
+│ docs        Query the Windmill documentation assistant when the instance     │
+│             supports it.                                                     │
+│ config      Inspect resolved CLI configuration.                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+

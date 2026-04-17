@@ -1,0 +1,24 @@
+                                                                                
+ Usage: wmx scripts [OPTIONS] COMMAND [ARGS]...                                 
+                                                                                
+ Manage deployed scripts and remote preview runs.                               
+                                                                                
+ Examples:   wmx scripts list --path-start f/team/   wmx scripts get            
+ f/team/send_report   wmx scripts create f/team/send_report --file              
+ ./send_report.py --language python3   wmx scripts run f/team/send_report       
+ --data @args.json --wait   wmx scripts preview ./scratch.py --data             
+ '{"customer_id":"123"}' --wait                                                 
+                                                                                
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ --help          Show this message and exit.                                  │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────╮
+│ list                                                                         │
+│ get                                                                          │
+│ create                                                                       │
+│ update                                                                       │
+│ delete                                                                       │
+│ run                                                                          │
+│ preview                                                                      │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
