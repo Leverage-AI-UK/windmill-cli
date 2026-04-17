@@ -43,6 +43,33 @@ def list_scripts(
     state.output.emit(items, label="scripts", human_renderer=lambda payload: render_table(payload))
 
 
+@app.command("search")
+def search_scripts(
+    ctx: typer.Context,
+    query: Annotated[str, typer.Argument(help="Keywords to search for in script paths and content.")],
+    path_start: Annotated[Optional[str], typer.Option(help="Filter by remote path prefix.")] = None,
+    languages: Annotated[Optional[str], typer.Option(help="Comma-separated language filter.")] = None,
+    limit: Annotated[int, typer.Option(help="Maximum number of results.")] = 50,
+) -> None:
+    """Search scripts by keyword matching in path and content."""
+    from wmx.search import search_items
+
+    state = get_state(ctx)
+    items = state.client().scripts.list_search(
+        path_start=path_start,
+        languages=languages,
+    )
+    results = search_items(
+        items,
+        query,
+        fields=["path", "content"],
+        limit=limit,
+    )
+    # Return path only for concise output
+    summary = [{"path": r["path"]} for r in results]
+    state.output.emit(summary, label="script search", human_renderer=lambda payload: render_table(payload))
+
+
 @app.command("get")
 def get_script(
     ctx: typer.Context,

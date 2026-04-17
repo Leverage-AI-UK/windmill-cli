@@ -47,6 +47,28 @@ def list_flows(
     state.output.emit(items, label="flows", human_renderer=lambda payload: render_table(payload))
 
 
+@app.command("search")
+def search_flows(
+    ctx: typer.Context,
+    query: Annotated[str, typer.Argument(help="Keywords to search for in flow paths and definitions.")],
+    path_start: Annotated[Optional[str], typer.Option(help="Filter by remote path prefix.")] = None,
+    limit: Annotated[int, typer.Option(help="Maximum number of results.")] = 50,
+) -> None:
+    """Search flows by keyword matching in path and flow definition."""
+    from wmx.search import search_items
+
+    state = get_state(ctx)
+    items = state.client().flows.list_search(path_start=path_start)
+    results = search_items(
+        items,
+        query,
+        fields=["path", "value"],
+        limit=limit,
+    )
+    summary = [{"path": r["path"]} for r in results]
+    state.output.emit(summary, label="flow search", human_renderer=lambda payload: render_table(payload))
+
+
 @app.command("get")
 def get_flow(
     ctx: typer.Context,

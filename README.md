@@ -96,6 +96,7 @@ wmx doctor        # Full diagnostic
 
 The top-level groups are plural for consistency and discoverability:
 
+- `search` (unified search across all entities)
 - `scripts`
 - `flows`
 - `resources`
@@ -108,6 +109,13 @@ The top-level groups are plural for consistency and discoverability:
 - `config`
 
 Examples:
+
+```bash
+# Search across all entities
+wmx search "xero"
+wmx search "postgres" --path-start f/team/
+wmx --json search "api"
+```
 
 ```bash
 wmx scripts list
@@ -226,6 +234,7 @@ See [docs/security.md](docs/security.md) for the full model.
 
 | Windmill MCP capability | `wmx` command surface |
 | --- | --- |
+| search | `wmx search ...` (unified), `wmx scripts search ...`, etc. |
 | scripts | `wmx scripts ...` |
 | flows | `wmx flows ...` |
 | resources | `wmx resources ...` |
@@ -244,6 +253,7 @@ src/wmx/
   config.py
   errors.py
   output.py
+  search.py
   state.py
   utils.py
   bundler.py

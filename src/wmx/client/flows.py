@@ -15,6 +15,13 @@ class FlowsAPI:
             params={"path_start": path_start, "page": page, "per_page": per_page},
         )
 
+    def list_search(self, *, path_start: str | None = None) -> list[dict[str, Any]]:
+        """Return flows with path and value for client-side search."""
+        return self.http.get_json(
+            f"/w/{self.http.workspace}/flows/list_search",
+            params={"path_start": path_start},
+        )
+
     def get(self, path: str) -> dict[str, Any]:
         return self.http.get_json(f"/w/{self.http.workspace}/flows/get/{path}")
 

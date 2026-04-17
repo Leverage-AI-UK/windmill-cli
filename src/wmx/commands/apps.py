@@ -34,6 +34,28 @@ def list_apps(
     state.output.emit(items, label="apps", human_renderer=lambda payload: render_table(payload))
 
 
+@app.command("search")
+def search_apps(
+    ctx: typer.Context,
+    query: Annotated[str, typer.Argument(help="Keywords to search for in app paths and definitions.")],
+    path_start: Annotated[Optional[str], typer.Option(help="Filter by remote path prefix.")] = None,
+    limit: Annotated[int, typer.Option(help="Maximum number of results.")] = 50,
+) -> None:
+    """Search apps by keyword matching in path and app definition."""
+    from wmx.search import search_items
+
+    state = get_state(ctx)
+    items = state.client().apps.list_search(path_start=path_start)
+    results = search_items(
+        items,
+        query,
+        fields=["path", "value"],
+        limit=limit,
+    )
+    summary = [{"path": r["path"]} for r in results]
+    state.output.emit(summary, label="app search", human_renderer=lambda payload: render_table(payload))
+
+
 @app.command("get")
 def get_app(
     ctx: typer.Context,

@@ -23,10 +23,40 @@ class JobsAPI:
     def __init__(self, http: HttpClient) -> None:
         self.http = http
 
-    def list_completed(self, *, page: int = 1, per_page: int = 50, success: bool | None = None) -> list[dict[str, Any]]:
+    def list_completed(
+        self,
+        *,
+        page: int = 1,
+        per_page: int = 50,
+        success: bool | None = None,
+        script_path_exact: str | None = None,
+        script_path_start: str | None = None,
+        schedule_path: str | None = None,
+        created_by: str | None = None,
+        tag: str | None = None,
+        label: str | None = None,
+        args: str | None = None,
+        result: str | None = None,
+        created_after: str | None = None,
+        created_before: str | None = None,
+    ) -> list[dict[str, Any]]:
         return self.http.get_json(
             f"/w/{self.http.workspace}/jobs/completed/list",
-            params={"page": page, "per_page": per_page, "success": success},
+            params={
+                "page": page,
+                "per_page": per_page,
+                "success": success,
+                "script_path_exact": script_path_exact,
+                "script_path_start": script_path_start,
+                "schedule_path": schedule_path,
+                "created_by": created_by,
+                "tag": tag,
+                "label": label,
+                "args": args,
+                "result": result,
+                "created_after": created_after,
+                "created_before": created_before,
+            },
         )
 
     def list_queue(self, *, page: int = 1, per_page: int = 50, running: bool | None = None) -> list[dict[str, Any]]:

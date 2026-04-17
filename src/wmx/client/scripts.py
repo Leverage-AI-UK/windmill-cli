@@ -29,6 +29,21 @@ class ScriptsAPI:
             },
         )
 
+    def list_search(
+        self,
+        *,
+        path_start: str | None = None,
+        languages: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Return scripts with path and content for client-side search."""
+        return self.http.get_json(
+            f"/w/{self.http.workspace}/scripts/list_search",
+            params={
+                "path_start": path_start,
+                "languages": languages,
+            },
+        )
+
     def get(self, path: str) -> dict[str, Any]:
         return self.http.get_json(f"/w/{self.http.workspace}/scripts/get/p/{path}")
 

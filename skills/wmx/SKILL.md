@@ -20,6 +20,7 @@ Use the Windmill HTTP API directly via command line. Designed for both humans an
 ## Command Groups
 
 ```
+wmx search     # Search across all entities (scripts, flows, resources, apps)
 wmx scripts    # Deploy and run scripts
 wmx flows      # Deploy and run flows
 wmx resources  # Manage resources (credentials, configs)
@@ -64,6 +65,45 @@ Fallback aliases: `WINDMILL_BASE_URL`, `WINDMILL_WORKSPACE`, `WINDMILL_TOKEN`
 Verify with: `wmx whoami`
 
 ## Common Workflows
+
+### Search
+
+Search across all entities at once - ideal for agents that don't know whether something is a script, flow, resource, or app:
+
+```bash
+# Search everywhere for "xero"
+wmx search "xero"
+# Output:
+# path          type
+# ------------  --------
+# f/xero/proxy  script
+# u/luc/xero    resource
+
+# Search with path prefix filter
+wmx search "api" --path-start f/team/
+
+# JSON output for programmatic use
+wmx --json search "postgres"
+```
+
+Entity-specific search commands are also available:
+
+```bash
+# Search scripts (searches path and code content)
+wmx scripts search "main"
+
+# Search flows (searches path and flow definition)
+wmx flows search "email"
+
+# Search resources (searches path only - values may contain secrets)
+wmx resources search "postgres"
+
+# Search apps (searches path and app definition)
+wmx apps search "dashboard"
+
+# Variables: use --query with list
+wmx variables list --query "api"
+```
 
 ### List and Get
 
@@ -156,6 +196,24 @@ wmx scripts preview ./script.py --no-wait
 ```bash
 # List recent jobs
 wmx jobs list --per-page 20
+
+# Filter jobs by script path
+wmx jobs list --script-path f/team/send_report
+wmx jobs list --script-path-start f/team/
+
+# Filter by schedule, user, tag, or label
+wmx jobs list --schedule-path f/team/nightly
+wmx jobs list --created-by luc
+wmx jobs list --tag gpu
+wmx jobs list --label important
+
+# Filter by job arguments or results (JSON subset matching)
+wmx jobs list --args '{"customer_id": "123"}'
+wmx jobs list --result '{"status": "success"}'
+
+# Filter by date range
+wmx jobs list --created-after 2024-01-01T00:00:00Z
+wmx jobs list --created-before 2024-01-31T23:59:59Z
 
 # Get job details (includes result, logs, timing)
 wmx jobs get <job-id>

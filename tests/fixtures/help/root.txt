@@ -44,6 +44,7 @@
 ╭─ Commands ───────────────────────────────────────────────────────────────────╮
 │ whoami                                                                       │
 │ doctor                                                                       │
+│ search      Search across scripts, flows, resources, and apps in one query.  │
 │ scripts     Manage deployed scripts and remote preview runs.                 │
 │ flows       Manage Windmill flows and flow previews.                         │
 │ resources   Manage Windmill resources.                                       │

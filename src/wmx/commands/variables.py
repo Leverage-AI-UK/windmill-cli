@@ -40,9 +40,16 @@ def list_variables(
     path_start: Annotated[Optional[str], typer.Option(help="Filter by remote path prefix.")] = None,
     page: Annotated[int, typer.Option(help="Page number.")] = 1,
     per_page: Annotated[int, typer.Option(help="Items per page.")] = 50,
+    query: Annotated[Optional[str], typer.Option(help="Keyword search in path and description.")] = None,
 ) -> None:
     state = get_state(ctx)
     items = state.client().variables.list(path_start=path_start, page=page, per_page=per_page)
+
+    # Apply client-side keyword filtering if query specified
+    if query:
+        from wmx.search import search_items
+        items = search_items(items, query, fields=["path", "description"])
+
     safe_items = [sanitize_variable(item) for item in items]
     state.output.emit(safe_items, label="variables", human_renderer=lambda payload: render_table(payload))
 

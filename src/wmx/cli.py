@@ -95,6 +95,44 @@ def doctor(ctx: typer.Context) -> None:
     state.output.emit(payload, label="doctor", human_renderer=lambda item: render_record(item))
 
 
+@app.command("search")
+def search_all(
+    ctx: typer.Context,
+    query: Annotated[str, typer.Argument(help="Keywords to search for across all entities.")],
+    path_start: Annotated[Optional[str], typer.Option(help="Filter by remote path prefix.")] = None,
+    limit: Annotated[int, typer.Option(help="Maximum results per entity type.")] = 20,
+) -> None:
+    """Search across scripts, flows, resources, and apps in one query."""
+    from wmx.output import render_table
+    from wmx.search import search_items
+
+    state = get_state(ctx)
+    client = state.client()
+    results: list[dict] = []
+
+    # Search scripts
+    scripts_data = client.scripts.list_search(path_start=path_start)
+    for item in search_items(scripts_data, query, fields=["path", "content"], limit=limit):
+        results.append({"type": "script", "path": item["path"]})
+
+    # Search flows
+    flows_data = client.flows.list_search(path_start=path_start)
+    for item in search_items(flows_data, query, fields=["path", "value"], limit=limit):
+        results.append({"type": "flow", "path": item["path"]})
+
+    # Search resources (path only for security)
+    resources_data = client.resources.list_search(path_start=path_start)
+    for item in search_items(resources_data, query, fields=["path"], limit=limit):
+        results.append({"type": "resource", "path": item["path"]})
+
+    # Search apps
+    apps_data = client.apps.list_search(path_start=path_start)
+    for item in search_items(apps_data, query, fields=["path", "value"], limit=limit):
+        results.append({"type": "app", "path": item["path"]})
+
+    state.output.emit(results, label="search", human_renderer=lambda payload: render_table(payload))
+
+
 def main() -> None:
     import sys
     try:

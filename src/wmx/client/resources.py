@@ -27,6 +27,21 @@ class ResourcesAPI:
             },
         )
 
+    def list_search(
+        self,
+        *,
+        path_start: str | None = None,
+        resource_type: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Return resources with path and value for client-side search."""
+        return self.http.get_json(
+            f"/w/{self.http.workspace}/resources/list_search",
+            params={
+                "path_start": path_start,
+                "resource_type": resource_type,
+            },
+        )
+
     def get(self, path: str) -> dict[str, Any]:
         return self.http.get_json(f"/w/{self.http.workspace}/resources/get/{path}")
 

@@ -26,9 +26,33 @@ def list_jobs(
     page: Annotated[int, typer.Option(help="Page number.")] = 1,
     per_page: Annotated[int, typer.Option(help="Items per page.")] = 50,
     success: Annotated[Optional[bool], typer.Option(help="Filter completed jobs by success.")] = None,
+    script_path: Annotated[Optional[str], typer.Option(help="Filter by exact script path.")] = None,
+    script_path_start: Annotated[Optional[str], typer.Option(help="Filter by script path prefix.")] = None,
+    schedule_path: Annotated[Optional[str], typer.Option(help="Filter by schedule path.")] = None,
+    created_by: Annotated[Optional[str], typer.Option(help="Filter by user who created the job.")] = None,
+    tag: Annotated[Optional[str], typer.Option(help="Filter by worker tag.")] = None,
+    label: Annotated[Optional[str], typer.Option(help="Filter by job label.")] = None,
+    args: Annotated[Optional[str], typer.Option(help="JSON subset filter for job arguments.")] = None,
+    result: Annotated[Optional[str], typer.Option(help="JSON subset filter for job results.")] = None,
+    created_after: Annotated[Optional[str], typer.Option(help="Filter jobs created after this ISO datetime.")] = None,
+    created_before: Annotated[Optional[str], typer.Option(help="Filter jobs created before this ISO datetime.")] = None,
 ) -> None:
     state = get_state(ctx)
-    items = state.client().jobs.list_completed(page=page, per_page=per_page, success=success)
+    items = state.client().jobs.list_completed(
+        page=page,
+        per_page=per_page,
+        success=success,
+        script_path_exact=script_path,
+        script_path_start=script_path_start,
+        schedule_path=schedule_path,
+        created_by=created_by,
+        tag=tag,
+        label=label,
+        args=args,
+        result=result,
+        created_after=created_after,
+        created_before=created_before,
+    )
     state.output.emit(items, label="jobs", human_renderer=lambda payload: render_table(payload))
 
 

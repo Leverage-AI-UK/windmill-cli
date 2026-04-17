@@ -14,6 +14,7 @@
 ╰──────────────────────────────────────────────────────────────────────────────╯
 ╭─ Commands ───────────────────────────────────────────────────────────────────╮
 │ list                                                                         │
+│ search    Search scripts by keyword matching in path and content.            │
 │ get                                                                          │
 │ create                                                                       │
 │ update                                                                       │

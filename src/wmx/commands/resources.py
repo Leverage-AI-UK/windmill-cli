@@ -58,6 +58,33 @@ def list_resources(
     state.output.emit(safe_items, label="resources", human_renderer=lambda payload: render_table(payload))
 
 
+@app.command("search")
+def search_resources(
+    ctx: typer.Context,
+    query: Annotated[str, typer.Argument(help="Keywords to search for in resource paths.")],
+    path_start: Annotated[Optional[str], typer.Option(help="Filter by remote path prefix.")] = None,
+    resource_type: Annotated[Optional[str], typer.Option("--type", help="Filter by resource type.")] = None,
+    limit: Annotated[int, typer.Option(help="Maximum number of results.")] = 50,
+) -> None:
+    """Search resources by keyword matching in path only (values may contain secrets)."""
+    from wmx.search import search_items
+
+    state = get_state(ctx)
+    items = state.client().resources.list_search(
+        path_start=path_start,
+        resource_type=resource_type,
+    )
+    # Search path only - values often contain secrets
+    results = search_items(
+        items,
+        query,
+        fields=["path"],
+        limit=limit,
+    )
+    summary = [{"path": r["path"]} for r in results]
+    state.output.emit(summary, label="resource search", human_renderer=lambda payload: render_table(payload))
+
+
 @app.command("get")
 def get_resource(
     ctx: typer.Context,
