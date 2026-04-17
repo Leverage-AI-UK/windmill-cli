@@ -153,8 +153,16 @@ wmx schedules create --file ./nightly.schedule.yaml
 ```
 
 ```bash
+# Standard apps (low-code builder)
+wmx apps list
+wmx apps get f/apps/my_app
 wmx apps create --file ./app.json
 wmx apps update f/apps/my_app --file ./app.json
+
+# Raw apps (React/Svelte full-code apps)
+wmx apps create --file ./raw_app.yaml --raw
+wmx apps update f/apps/my_raw_app --file ./raw_app.yaml --raw
+wmx apps delete f/apps/my_app --yes
 ```
 
 ```bash
@@ -238,6 +246,7 @@ src/wmx/
   output.py
   state.py
   utils.py
+  bundler.py
   client/
   commands/
 tests/

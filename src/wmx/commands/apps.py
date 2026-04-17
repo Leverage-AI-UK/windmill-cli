@@ -13,7 +13,11 @@ from wmx.utils import confirm_or_abort, load_structured_file
 app = typer.Typer(
     help=(
         "Manage Windmill apps.\n\n"
-        "App payload files should contain the HTTP API request body, including value and policy.\n"
+        "App payload files should contain the HTTP API request body, including value and policy.\n\n"
+        "For raw apps (React/Svelte full-code apps), use the --raw flag. Raw apps require:\n"
+        "  - value.files: Source files (/App.tsx, /index.tsx, /index.css, /package.json)\n"
+        "  - value.data: {schema: 'app1', tables: []}\n"
+        "  - value.runnables: Backend scripts (optional)\n"
     )
 )
 
@@ -44,10 +48,11 @@ def get_app(
 def create_app(
     ctx: typer.Context,
     file: Annotated[Path, typer.Option("--file", exists=True, dir_okay=False, readable=True, help="App JSON or YAML file.")],
+    raw: Annotated[bool, typer.Option("--raw", help="Create as raw app (React/Svelte). Required for full-code apps.")] = False,
 ) -> None:
     state = get_state(ctx)
     payload = load_structured_file(file)
-    created = state.client().apps.create(payload)
+    created = state.client().apps.create(payload, raw=raw)
     state.output.emit({"result": created, "path": payload.get("path") if isinstance(payload, dict) else None}, label="app create")
 
 
@@ -56,12 +61,13 @@ def update_app(
     ctx: typer.Context,
     path: Annotated[str, typer.Argument(help="Remote app path.")],
     file: Annotated[Path, typer.Option("--file", exists=True, dir_okay=False, readable=True, help="App JSON or YAML file.")],
+    raw: Annotated[bool, typer.Option("--raw", help="Update as raw app (React/Svelte). Required for full-code apps.")] = False,
 ) -> None:
     state = get_state(ctx)
     payload = load_structured_file(file)
     if isinstance(payload, dict):
         payload["path"] = path
-    updated = state.client().apps.update(path, payload)
+    updated = state.client().apps.update(path, payload, raw=raw)
     state.output.emit({"path": path, "result": updated}, label="app update")
 
 

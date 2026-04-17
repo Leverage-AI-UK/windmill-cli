@@ -62,6 +62,64 @@ class HttpClient:
     ) -> Any:
         return self._request("DELETE", path, params=params, json_body=payload).json()
 
+    def post_multipart(
+        self,
+        path: str,
+        *,
+        data: dict[str, Any],
+        files: dict[str, tuple[str, str, str]],
+    ) -> str:
+        """POST multipart/form-data request.
+
+        Args:
+            path: API path
+            data: Form fields as key-value pairs (will be JSON-encoded if dict/list)
+            files: File fields as {field_name: (filename, content, content_type)}
+        """
+        return self._request_multipart("POST", path, data=data, files=files).text
+
+    def _request_multipart(
+        self,
+        method: str,
+        path: str,
+        *,
+        data: dict[str, Any],
+        files: dict[str, tuple[str, str, str]],
+    ) -> httpx.Response:
+        # Prepare form data - JSON encode complex values
+        form_data = {}
+        for key, value in data.items():
+            if isinstance(value, (dict, list)):
+                form_data[key] = json.dumps(value)
+            else:
+                form_data[key] = value
+
+        # Prepare files for httpx
+        httpx_files = {key: val for key, val in files.items()}
+
+        # Make a fresh client for multipart to avoid Content-Type: application/json
+        client = httpx.Client(
+            base_url=self.config.api_base_url,
+            headers={
+                "Authorization": f"Bearer {self.config.token}",
+                "User-Agent": "wmx/0.1.0",
+            },
+            timeout=httpx.Timeout(60.0),
+        )
+        try:
+            response = client.request(
+                method,
+                path,
+                data=form_data,
+                files=httpx_files,
+            )
+        finally:
+            client.close()
+
+        if response.is_success:
+            return response
+        raise self._to_api_error(response)
+
     def _request(
         self,
         method: str,
